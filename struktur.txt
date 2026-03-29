@@ -1,0 +1,69 @@
+adhi-portfolio/
+│
+├── public/
+│   ├── images/
+│   │   ├── Adhi.jpg                    (foto profil 9:16)
+│   │   ├── logo.png                    (logo di atas welcome text)
+│   │   ├── og-image.jpg                (thumbnail untuk social media)
+│   │   ├── favicon.svg                 (icon website)
+│   │   ├── apple-touch-icon.png        (icon untuk iOS)
+│   │   ├── projects/
+│   │   │   ├── project1.jpg
+│   │   │   ├── project2.jpg
+│   │   │   ├── project3.jpg
+│   │   │   ├── project4.jpg
+│   │   │   └── project5.jpg
+│   │   └── certificates/
+│   │       ├── sertifikat1.jpg
+│   │       ├── sertifikat2.jpg
+│   │       ├── sertifikat3.jpg
+│   │       ├── sertifikat4.jpg
+│   │       ├── sertifikat5.jpg
+│   │       ├── sertifikat6.jpg
+│   │       ├── sertifikat7.jpg
+│   │       ├── sertifikat8.jpg
+│   │       ├── sertifikat9.jpg
+│   │       └── sertifikat10.jpg
+│   │
+│   └── site.webmanifest                 (manifest PWA)
+│
+├── src/
+│   ├── components/
+│   │   ├── Navbar.astro                (navbar responsive)
+│   │   ├── ThemeToggle.astro           (dark/light mode toggle)
+│   │   ├── Welcome.astro               (welcome + logo + loading bar)
+│   │   ├── Globe.astro                 (interactive globe 360°)
+│   │   ├── ProjectCard.astro           (card untuk project)
+│   │   ├── CertificateCard.astro       (card untuk sertifikat)
+│   │   └── GlassCard.astro             (komponen box transparan)
+│   │
+│   ├── layouts/
+│   │   └── Layout.astro                (layout utama dengan navbar, theme, meta)
+│   │
+│   ├── pages/
+│   │   ├── index.astro                 (homepage)
+│   │   ├── about.astro                 (about me dengan foto & biodata)
+│   │   ├── projects.astro              (halaman project)
+│   │   ├── certificates.astro          (halaman sertifikat dengan modal zoom)
+│   │   └── contact.astro               (halaman contact form & social media)
+│   │
+│   ├── styles/
+│   │   └── global.css                  (global styles + animations)
+│   │
+│   ├── lib/
+│   │   └── lottie.js                   (helper untuk Lottie - optional)
+│   │
+│   └── data/
+│       ├── projects.json               (data project)
+│       ├── certificates.json           (data sertifikat)
+│       └── social.json                 (data link social media)
+│
+├── .env.example                         (environment variables template)
+├── .eslintrc.cjs                        (ESLint configuration)
+├── .gitignore                           (git ignore file)
+├── .prettierrc.mjs                      (Prettier configuration)
+├── astro.config.mjs                     (Astro configuration)
+├── package.json                         (dependencies dan scripts)
+├── tailwind.config.mjs                  (Tailwind CSS configuration)
+├── tsconfig.json                        (TypeScript configuration)
+└── README.md                            (project documentation)

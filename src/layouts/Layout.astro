@@ -1,0 +1,402 @@
+---
+// Layout.astro - Main layout dengan integrasi penuh ke global.css dan semua komponen
+export interface Props {
+  title?: string;
+  description?: string;
+  keywords?: string;
+  author?: string;
+  image?: string;
+  children: any;
+}
+
+const { 
+  title = "Adhi Pratama | Cybersecurity & Web Developer Portfolio", 
+  description = "Professional portfolio showcasing cybersecurity expertise, web development projects, and Telegram bot creations. Ethical hacker and full-stack developer from SMKS Pasundan 1 Banjar.",
+  keywords = "cybersecurity, web developer, portfolio, ethical hacker, Telegram bot, penetration testing, Indonesia, Banjar",
+  author = "Adhi Pratama",
+  image = "/images/og-image.jpg"
+} = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes" />
+    <meta name="description" content={description} />
+    <meta name="keywords" content={keywords} />
+    <meta name="author" content={author} />
+    <meta name="theme-color" content="#dc2626" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#991b1b" media="(prefers-color-scheme: dark)" />
+    <meta name="robots" content="index, follow" />
+    
+    {/* Open Graph / Facebook */}
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={image} />
+    <meta property="og:url" content={Astro.url} />
+    <meta property="og:site_name" content="Adhi Pratama Portfolio" />
+    <meta property="og:locale" content="id_ID" />
+    
+    {/* Twitter */}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={image} />
+    <meta name="twitter:creator" content="@adhipratama" />
+    
+    {/* Icons */}
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    
+    {/* Preconnect untuk performa */}
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    
+    {/* Title */}
+    <title>{title}</title>
+    
+    {/* Global CSS Import */}
+    <link rel="stylesheet" href="/src/styles/global.css" />
+    
+    {/* Additional Critical CSS */}
+    <style is:global>
+      /* Critical CSS untuk initial render */
+      body {
+        opacity: 0;
+        animation: fade-in 0.3s ease-out forwards;
+      }
+      
+      @keyframes fade-in {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+      
+      /* Loading indicator untuk initial load */
+      .loading-init {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, #dc2626, #991b1b);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        transition: opacity 0.5s ease;
+      }
+      
+      .loading-init.hide {
+        opacity: 0;
+        pointer-events: none;
+      }
+      
+      .loading-spinner {
+        width: 50px;
+        height: 50px;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-top-color: white;
+        border-radius: 50%;
+        animation: spin-fast 0.8s linear infinite;
+      }
+    </style>
+  </head>
+  
+  <body class="antialiased overflow-x-hidden">
+    {/* Initial Loading Screen */}
+    <div id="initial-loading" class="loading-init">
+      <div class="loading-spinner"></div>
+    </div>
+    
+    {/* Navbar Component */}
+    <Navbar client:load />
+    
+    {/* Main Content */}
+    <main class="min-h-screen pt-20 pb-16 md:pt-24 md:pb-20">
+      <div class="container-custom">
+        {Astro.props.children}
+      </div>
+    </main>
+    
+    {/* Footer */}
+    <footer class="py-8 border-t border-gray-200/50 dark:border-gray-800/50 mt-auto">
+      <div class="container-custom">
+        <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+          {/* Copyright */}
+          <div class="text-center md:text-left">
+            <p class="text-sm text-gray-600 dark:text-gray-400">
+              © {new Date().getFullYear()} <span class="font-semibold text-red-600 dark:text-red-400">Adhi Pratama</span>. 
+              All rights reserved.
+            </p>
+            <p class="text-xs text-gray-500 dark:text-gray-500 mt-1">
+              Cybersecurity Enthusiast | Web Developer | Telegram Bot Creator
+            </p>
+          </div>
+          
+          {/* Quick Links */}
+          <div class="flex flex-wrap justify-center gap-4 md:gap-6">
+            <a href="/" class="text-sm text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400 transition-colors duration-300">Home</a>
+            <a href="/about" class="text-sm text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400 transition-colors duration-300">About</a>
+            <a href="/projects" class="text-sm text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400 transition-colors duration-300">Projects</a>
+            <a href="/certificates" class="text-sm text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400 transition-colors duration-300">Certificates</a>
+            <a href="/contact" class="text-sm text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400 transition-colors duration-300">Contact</a>
+          </div>
+          
+          {/* Social Icons */}
+          <div class="flex gap-3">
+            <a href="https://github.com/yourusername" target="_blank" rel="noopener noreferrer" 
+               class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-red-500 hover:text-white dark:hover:bg-red-500 transition-all duration-300 hover:scale-110">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12c0 4.42 2.87 8.17 6.84 9.49.5.09.68-.21.68-.48 0-.24-.01-.88-.01-1.72-2.78.6-3.37-1.34-3.37-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.89 1.52 2.34 1.08 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02.8-.22 1.65-.33 2.5-.33.85 0 1.7.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.69-4.57 4.94.36.31.68.92.68 1.85 0 1.34-.01 2.42-.01 2.75 0 .27.18.58.69.48C19.13 20.17 22 16.42 22 12c0-5.52-4.48-10-10-10z"/>
+              </svg>
+            </a>
+            <a href="https://linkedin.com/in/yourusername" target="_blank" rel="noopener noreferrer" 
+               class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-blue-500 hover:text-white transition-all duration-300 hover:scale-110">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/>
+              </svg>
+            </a>
+            <a href="https://instagram.com/yourusername" target="_blank" rel="noopener noreferrer" 
+               class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-pink-500 hover:text-white transition-all duration-300 hover:scale-110">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2c2.717 0 3.056.01 4.122.06 1.065.05 1.79.217 2.428.465.66.254 1.216.598 1.772 1.153a4.908 4.908 0 0 1 1.153 1.772c.247.637.415 1.363.465 2.428.047 1.066.06 1.405.06 4.122 0 2.717-.01 3.056-.06 4.122-.05 1.065-.218 1.79-.465 2.428a4.883 4.883 0 0 1-1.153 1.772 4.915 4.915 0 0 1-1.772 1.153c-.637.247-1.363.415-2.428.465-1.066.047-1.405.06-4.122.06-2.717 0-3.056-.01-4.122-.06-1.065-.05-1.79-.218-2.428-.465a4.89 4.89 0 0 1-1.772-1.153 4.904 4.904 0 0 1-1.153-1.772c-.248-.637-.415-1.363-.465-2.428C2.013 15.056 2 14.717 2 12c0-2.717.01-3.056.06-4.122.05-1.066.217-1.79.465-2.428a4.88 4.88 0 0 1 1.153-1.772A4.897 4.897 0 0 1 5.45 2.525c.638-.248 1.362-.415 2.428-.465C8.944 2.013 9.283 2 12 2zm0 5a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm6.5-.25a1.25 1.25 0 0 0-2.5 0 1.25 1.25 0 0 0 2.5 0zM12 9a3 3 0 1 1 0 6 3 3 0 0 1 0-6z"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+        
+        {/* Credits */}
+        <div class="text-center mt-6 pt-6 border-t border-gray-200/50 dark:border-gray-800/50">
+          <p class="text-xs text-gray-400 dark:text-gray-600">
+            Built with <span class="text-red-500">❤</span> using Astro & Tailwind CSS | 
+            <span class="inline-block animate-pulse-glow">🔴</span> Ethical Hacking for Better Security
+          </p>
+        </div>
+      </div>
+    </footer>
+    
+    {/* Script untuk hide loading screen */}
+    <script>
+      (function() {
+        // Hide loading screen after page loads
+        window.addEventListener('load', () => {
+          const loadingScreen = document.getElementById('initial-loading');
+          if (loadingScreen) {
+            setTimeout(() => {
+              loadingScreen.classList.add('hide');
+              setTimeout(() => {
+                loadingScreen.style.display = 'none';
+              }, 500);
+            }, 500);
+          }
+        });
+        
+        // Detect dark mode preference
+        const isDark = localStorage.getItem('theme') === 'dark' || 
+          (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        
+        if (isDark) {
+          document.documentElement.classList.add('dark');
+        }
+        
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+          anchor.addEventListener('click', function(e) {
+            const href = this.getAttribute('href');
+            if (href && href !== '#') {
+              const target = document.querySelector(href);
+              if (target) {
+                e.preventDefault();
+                target.scrollIntoView({ behavior: 'smooth' });
+              }
+            }
+          });
+        });
+        
+        // Add viewport height fix for mobile
+        const setVH = () => {
+          const vh = window.innerHeight * 0.01;
+          document.documentElement.style.setProperty('--vh', `${vh}px`);
+        };
+        
+        setVH();
+        window.addEventListener('resize', setVH);
+        
+        // Disable right click on images (optional)
+        const images = document.querySelectorAll('img');
+        images.forEach(img => {
+          img.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+          });
+        });
+      })();
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  /* Additional styles yang tidak ada di global.css */
+  
+  /* Mobile viewport fix */
+  .min-h-screen {
+    min-height: 100vh;
+    min-height: calc(var(--vh, 1vh) * 100);
+  }
+  
+  /* Focus visible untuk accessibility */
+  :focus-visible {
+    outline: 2px solid #dc2626;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  
+  /* Disable outline untuk mouse users */
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+  
+  /* Print styles */
+  @media print {
+    .navbar, footer, .initial-loading {
+      display: none !important;
+    }
+    
+    body {
+      background: white !important;
+      color: black !important;
+    }
+    
+    .glass, .transparent-box {
+      background: white !important;
+      border: 1px solid #ddd !important;
+      box-shadow: none !important;
+    }
+    
+    a {
+      text-decoration: none !important;
+      color: black !important;
+    }
+    
+    img {
+      max-width: 100% !important;
+      page-break-inside: avoid;
+    }
+  }
+  
+  /* Smooth scrolling for all elements */
+  * {
+    scroll-behavior: smooth;
+  }
+  
+  /* Better focus styles */
+  a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible {
+    outline: 2px solid #dc2626;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.2);
+  }
+  
+  /* Prevent overflow */
+  img, video, iframe {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  /* Better button defaults */
+  button {
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+  
+  /* Better link defaults */
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+  
+  /* Disable number input spinners */
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  
+  input[type="number"] {
+    -moz-appearance: textfield;
+  }
+  
+  /* Better form elements */
+  input, textarea, select, button {
+    font-family: inherit;
+  }
+  
+  /* Loading animation untuk images */
+  img {
+    background: linear-gradient(110deg, #ececec 8%, #f5f5f5 18%, #ececec 33%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s linear infinite;
+  }
+  
+  body.dark img {
+    background: linear-gradient(110deg, #2a2a2a 8%, #333 18%, #2a2a2a 33%);
+    background-size: 200% 100%;
+  }
+  
+  img.loaded {
+    animation: none;
+    background: none;
+  }
+  
+  @keyframes shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+  
+  /* Image loaded state */
+  img[src] {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  img.loaded {
+    opacity: 1;
+  }
+</style>
+
+<script>
+  // Image lazy loading with fade in
+  (function() {
+    const images = document.querySelectorAll('img');
+    
+    const imageObserver = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const img = entry.target;
+          if (img.complete) {
+            img.classList.add('loaded');
+          } else {
+            img.addEventListener('load', () => {
+              img.classList.add('loaded');
+            });
+          }
+          observer.unobserve(img);
+        }
+      });
+    });
+    
+    images.forEach(img => {
+      imageObserver.observe(img);
+    });
+  })();
+</script>

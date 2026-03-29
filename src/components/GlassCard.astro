@@ -1,0 +1,19 @@
+---
+// GlassCard.astro - Komponen glassmorphism tanpa blur (transparan dengan border)
+export interface Props {
+  children: any;
+  className?: string;
+}
+
+const { children, className = '' } = Astro.props;
+---
+
+<div class={`
+  relative rounded-2xl border border-white/30 dark:border-gray-700/50
+  bg-white/30 dark:bg-black/30
+  shadow-xl backdrop-blur-none
+  transition-all duration-500 hover:shadow-2xl hover:-translate-y-1
+  ${className}
+`}>
+  {children}
+</div>

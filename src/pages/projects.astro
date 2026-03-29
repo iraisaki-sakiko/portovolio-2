@@ -1,0 +1,76 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import GlassCard from '../components/GlassCard.astro';
+
+// Projects Data
+const projects = [
+  {
+    title: "Web Portfolio",
+    description: "Personal portfolio website built with Astro and Tailwind CSS. Features responsive design, dark mode, and interactive globe animation. Showcases my work and skills professionally.",
+    image: "/images/projects/project1.jpg",
+    tags: ["Astro", "Tailwind CSS", "JavaScript"],
+    link: "https://github.com/yourusername/portfolio"
+  },
+  {
+    title: "CXS Stat Bot",
+    description: "Telegram bot with various features including statistics, monitoring, and automation. Built with Python and python-telegram-bot library. Features real-time data processing and user management.",
+    image: "/images/projects/project2.jpg",
+    tags: ["Python", "Telegram API", "Bot Development"],
+    link: "https://github.com/yourusername/cxs-stat-bot"
+  },
+  {
+    title: "C2 Botnet DDoS (Educational)",
+    description: "Educational command & control server for understanding DDoS attack mechanisms. Created for learning purposes to understand how botnets operate and how to defend against them.",
+    image: "/images/projects/project3.jpg",
+    tags: ["Python", "Networking", "Educational", "Security"],
+    link: "https://github.com/yourusername/c2-botnet-edu"
+  },
+  {
+    title: "Omega The Judgement Bot",
+    description: "Advanced Telegram bot for penetration testing and web security assessment. Built with Python, runs on Termux. Features vulnerability scanning, information gathering, and security testing tools.",
+    image: "/images/projects/project4.jpg",
+    tags: ["Python", "Termux", "Penetration Testing", "Security"],
+    link: "https://github.com/yourusername/omega-bot"
+  },
+  {
+    title: "2APK - Web Control Panel",
+    description: "Backend system with web control panel for monitoring servers in real-time. Features dashboard, analytics, and management interface built with HTML, CSS, and JavaScript.",
+    image: "/images/projects/project5.jpg",
+    tags: ["HTML/CSS/JS", "Node.js", "Real-time Monitoring", "Dashboard"],
+    link: "https://github.com/yourusername/2apk-panel"
+  }
+];
+---
+
+<Layout title="Projects | My Portfolio" description="Check out my latest projects and work">
+  <div class="max-w-7xl mx-auto">
+    <div class="text-center mb-12">
+      <h1 class="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-red-600 to-red-400 bg-clip-text text-transparent">
+        My Projects
+      </h1>
+      <p class="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+        Explore my work in cybersecurity, web development, and bot creation
+      </p>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {projects.map((project) => (
+        <ProjectCard
+          title={project.title}
+          description={project.description}
+          image={project.image}
+          tags={project.tags}
+          link={project.link}
+        />
+      ))}
+    </div>
+    
+    {/* Note Section */}
+    <GlassCard class="mt-12 p-6 text-center">
+      <p class="text-sm text-gray-600 dark:text-gray-400">
+        ⚠️ <strong>Educational Purpose Only:</strong> All security-related projects are created for educational purposes to understand and defend against cyber threats.
+      </p>
+    </GlassCard>
+  </div>
+</Layout>

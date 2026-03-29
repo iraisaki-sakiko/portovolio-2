@@ -1,0 +1,409 @@
+---
+// Globe.astro - Interactive 3D Globe dengan drag rotation (ringan)
+---
+
+<div class="relative w-full max-w-2xl mx-auto">
+  <div class="relative w-full aspect-square">
+    <!-- Canvas untuk globe interaktif -->
+    <canvas 
+      id="globe-canvas" 
+      class="w-full h-full rounded-full cursor-grab active:cursor-grabbing shadow-2xl transition-all duration-300 hover:shadow-3xl"
+      width="800"
+      height="800"
+    ></canvas>
+    
+    {/* Info Text */}
+    <div class="absolute -bottom-8 left-0 right-0 text-center">
+      <p class="text-sm text-gray-500 dark:text-gray-400">
+        🖱️ Drag untuk memutar globe 360°
+      </p>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Interactive 3D Globe dengan Canvas 2D (tanpa Three.js)
+  (function() {
+    const canvas = document.getElementById('globe-canvas');
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    let width = canvas.clientWidth;
+    let height = canvas.clientHeight;
+    
+    // Set canvas size
+    const resizeCanvas = () => {
+      width = canvas.clientWidth;
+      height = canvas.clientHeight;
+      canvas.width = width;
+      canvas.height = height;
+      draw();
+    };
+    
+    // Globe parameters
+    let rotationX = 0; // Rotasi horizontal (kiri-kanan)
+    let rotationY = 0; // Rotasi vertikal (atas-bawah)
+    let isDragging = false;
+    let lastX = 0;
+    let lastY = 0;
+    
+    // Radius globe
+    const radius = Math.min(width, height) * 0.4;
+    const centerX = width / 2;
+    const centerY = height / 2;
+    
+    // Titik-titik merah (partikel)
+    const particles = [];
+    const particleCount = 800;
+    
+    // Generate titik-titik merah di permukaan globe
+    for (let i = 0; i < particleCount; i++) {
+      // Distribusi sphere (merata di permukaan bola)
+      const theta = Math.random() * Math.PI * 2;
+      const phi = Math.acos(2 * Math.random() - 1);
+      
+      // Koordinat 3D
+      const x = Math.sin(phi) * Math.cos(theta);
+      const y = Math.sin(phi) * Math.sin(theta);
+      const z = Math.cos(phi);
+      
+      // Ukuran random
+      const size = 1.5 + Math.random() * 2.5;
+      
+      // Warna merah dengan variasi
+      const color = `hsl(${0 + Math.random() * 20}, ${80 + Math.random() * 20}%, ${55 + Math.random() * 20}%)`;
+      
+      particles.push({ x, y, z, theta, phi, size, color });
+    }
+    
+    // Texture peta (pattern benua) - digambar sebagai garis dan bentuk
+    const continents = [
+      // Afrika (bentuk)
+      { points: [[0.25, 0.3], [0.28, 0.28], [0.32, 0.29], [0.35, 0.32], [0.34, 0.36], [0.3, 0.38], [0.26, 0.37], [0.24, 0.34], [0.25, 0.3]], color: '#ff4444' },
+      // Amerika Utara
+      { points: [[-0.45, 0.25], [-0.42, 0.22], [-0.38, 0.23], [-0.35, 0.26], [-0.37, 0.3], [-0.42, 0.32], [-0.46, 0.3], [-0.45, 0.25]], color: '#ff6666' },
+      // Amerika Selatan
+      { points: [[-0.38, -0.15], [-0.35, -0.18], [-0.32, -0.17], [-0.3, -0.12], [-0.33, -0.08], [-0.37, -0.1], [-0.38, -0.15]], color: '#ff5555' },
+      // Asia
+      { points: [[0.55, 0.2], [0.6, 0.18], [0.65, 0.22], [0.62, 0.28], [0.57, 0.3], [0.53, 0.26], [0.55, 0.2]], color: '#ff7777' },
+      // Eropa
+      { points: [[0.4, 0.35], [0.45, 0.33], [0.48, 0.35], [0.46, 0.38], [0.42, 0.39], [0.4, 0.35]], color: '#ff8888' },
+      // Australia
+      { points: [[0.58, -0.45], [0.62, -0.47], [0.65, -0.44], [0.62, -0.41], [0.58, -0.43], [0.58, -0.45]], color: '#ff9999' },
+      // Antartika (lingkaran bawah)
+      { points: [[-0.7, -0.85], [-0.5, -0.88], [-0.3, -0.87], [0, -0.86], [0.3, -0.87], [0.5, -0.88], [0.7, -0.85], [0.6, -0.82], [0.3, -0.83], [0, -0.84], [-0.3, -0.83], [-0.6, -0.82], [-0.7, -0.85]], color: '#ffaaaa' }
+    ];
+    
+    // Garis grid (lintang & bujur)
+    const gridLines = [];
+    
+    // Garis lintang (horizontal)
+    for (let lat = -75; lat <= 75; lat += 30) {
+      const phi = (90 - lat) * Math.PI / 180;
+      const radiusLat = Math.sin(phi);
+      const yPos = Math.cos(phi);
+      
+      const points = [];
+      for (let lon = 0; lon <= 360; lon += 10) {
+        const theta = lon * Math.PI / 180;
+        const x = radiusLat * Math.cos(theta);
+        const z = radiusLat * Math.sin(theta);
+        points.push({ x, y: yPos, z });
+      }
+      gridLines.push({ points, type: 'lat', lat });
+    }
+    
+    // Garis bujur (vertikal)
+    for (let lon = 0; lon < 360; lon += 30) {
+      const points = [];
+      for (let lat = -85; lat <= 85; lat += 5) {
+        const phi = (90 - lat) * Math.PI / 180;
+        const theta = lon * Math.PI / 180;
+        const x = Math.sin(phi) * Math.cos(theta);
+        const y = Math.cos(phi);
+        const z = Math.sin(phi) * Math.sin(theta);
+        points.push({ x, y, z });
+      }
+      gridLines.push({ points, type: 'lon', lon });
+    }
+    
+    // Fungsi proyeksi 3D ke 2D
+    function project3DTo2D(x, y, z, rotX, rotY) {
+      // Rotasi Y (kiri-kanan)
+      const cosY = Math.cos(rotY);
+      const sinY = Math.sin(rotY);
+      let x1 = x * cosY - z * sinY;
+      let z1 = x * sinY + z * cosY;
+      let y1 = y;
+      
+      // Rotasi X (atas-bawah)
+      const cosX = Math.cos(rotX);
+      const sinX = Math.sin(rotX);
+      let x2 = x1;
+      let y2 = y1 * cosX - z1 * sinX;
+      let z2 = y1 * sinX + z1 * cosX;
+      
+      // Proyeksi ke 2D
+      const scale = radius / 1.2;
+      const screenX = centerX + x2 * scale;
+      const screenY = centerY + y2 * scale;
+      const zDepth = z2;
+      
+      return { x: screenX, y: screenY, z: zDepth };
+    }
+    
+    // Gambar globe
+    function draw() {
+      if (!ctx) return;
+      
+      // Clear canvas
+      ctx.clearRect(0, 0, width, height);
+      
+      // Gambar shadow/glow di belakang globe
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, radius + 8, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255, 68, 68, 0.2)';
+      ctx.fill();
+      
+      // Gambar outline globe
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(255, 100, 100, 0.6)';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      
+      // Gambar gradient background globe
+      const gradient = ctx.createRadialGradient(centerX - radius * 0.3, centerY - radius * 0.3, radius * 0.2, centerX, centerY, radius);
+      gradient.addColorStop(0, '#8b0000');
+      gradient.addColorStop(0.5, '#660000');
+      gradient.addColorStop(1, '#330000');
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+      ctx.fillStyle = gradient;
+      ctx.fill();
+      
+      // Gambar grid lines (garis-garis peta)
+      gridLines.forEach(line => {
+        ctx.beginPath();
+        let first = true;
+        
+        line.points.forEach(point => {
+          const projected = project3DTo2D(point.x, point.y, point.z, rotationX, rotationY);
+          
+          // Cek apakah titik di depan globe
+          if (projected.z > -0.5) {
+            if (first) {
+              ctx.moveTo(projected.x, projected.y);
+              first = false;
+            } else {
+              ctx.lineTo(projected.x, projected.y);
+            }
+          } else {
+            first = true;
+          }
+        });
+        
+        ctx.strokeStyle = 'rgba(255, 100, 100, 0.4)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      });
+      
+      // Gambar benua (texture peta)
+      continents.forEach(continent => {
+        ctx.beginPath();
+        let first = true;
+        
+        continent.points.forEach(point => {
+          // Konversi koordinat 2D peta ke 3D sphere
+          const theta = point[0] * Math.PI;
+          const phi = (point[1] + 0.5) * Math.PI;
+          const x = Math.sin(phi) * Math.cos(theta);
+          const y = Math.cos(phi);
+          const z = Math.sin(phi) * Math.sin(theta);
+          
+          const projected = project3DTo2D(x, y, z, rotationX, rotationY);
+          
+          if (projected.z > -0.3) {
+            if (first) {
+              ctx.moveTo(projected.x, projected.y);
+              first = false;
+            } else {
+              ctx.lineTo(projected.x, projected.y);
+            }
+          } else {
+            first = true;
+          }
+        });
+        
+        ctx.closePath();
+        ctx.fillStyle = continent.color;
+        ctx.fill();
+        ctx.strokeStyle = '#ff0000';
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
+      });
+      
+      // Gambar titik-titik merah (partikel)
+      particles.forEach(particle => {
+        const projected = project3DTo2D(particle.x, particle.y, particle.z, rotationX, rotationY);
+        
+        // Hanya gambar jika di depan globe
+        if (projected.z > -0.3) {
+          ctx.beginPath();
+          ctx.arc(projected.x, projected.y, particle.size * (0.5 + (projected.z + 1) / 4), 0, Math.PI * 2);
+          ctx.fillStyle = particle.color;
+          ctx.fill();
+          
+          // Glow effect
+          ctx.beginPath();
+          ctx.arc(projected.x, projected.y, particle.size * 1.5, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(255, 68, 68, 0.3)';
+          ctx.fill();
+        }
+      });
+      
+      // Gambar highlight (cahaya)
+      const highlightGradient = ctx.createRadialGradient(centerX - radius * 0.2, centerY - radius * 0.3, radius * 0.1, centerX, centerY, radius);
+      highlightGradient.addColorStop(0, 'rgba(255, 200, 200, 0.3)');
+      highlightGradient.addColorStop(1, 'rgba(255, 100, 100, 0)');
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+      ctx.fillStyle = highlightGradient;
+      ctx.fill();
+      
+      // Gambar outline dengan efek glow
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+      ctx.strokeStyle = '#ff6666';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, radius + 2, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(255, 100, 100, 0.3)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+    
+    // Event handlers untuk drag
+    function handleMouseDown(e) {
+      isDragging = true;
+      lastX = e.clientX;
+      lastY = e.clientY;
+      canvas.style.cursor = 'grabbing';
+    }
+    
+    function handleMouseMove(e) {
+      if (!isDragging) return;
+      
+      const deltaX = e.clientX - lastX;
+      const deltaY = e.clientY - lastY;
+      
+      // Update rotasi
+      rotationY += deltaX * 0.008;
+      rotationX += deltaY * 0.008;
+      
+      // Batasi rotasi X
+      rotationX = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, rotationX));
+      
+      lastX = e.clientX;
+      lastY = e.clientY;
+      
+      draw();
+    }
+    
+    function handleMouseUp() {
+      isDragging = false;
+      canvas.style.cursor = 'grab';
+    }
+    
+    // Touch events untuk mobile
+    function handleTouchStart(e) {
+      e.preventDefault();
+      const touch = e.touches[0];
+      isDragging = true;
+      lastX = touch.clientX;
+      lastY = touch.clientY;
+    }
+    
+    function handleTouchMove(e) {
+      e.preventDefault();
+      if (!isDragging) return;
+      
+      const touch = e.touches[0];
+      const deltaX = touch.clientX - lastX;
+      const deltaY = touch.clientY - lastY;
+      
+      rotationY += deltaX * 0.008;
+      rotationX += deltaY * 0.008;
+      rotationX = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, rotationX));
+      
+      lastX = touch.clientX;
+      lastY = touch.clientY;
+      
+      draw();
+    }
+    
+    function handleTouchEnd(e) {
+      e.preventDefault();
+      isDragging = false;
+    }
+    
+    // Resize handler
+    window.addEventListener('resize', () => {
+      resizeCanvas();
+      draw();
+    });
+    
+    // Setup event listeners
+    canvas.addEventListener('mousedown', handleMouseDown);
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleMouseUp);
+    
+    canvas.addEventListener('touchstart', handleTouchStart);
+    canvas.addEventListener('touchmove', handleTouchMove);
+    canvas.addEventListener('touchend', handleTouchEnd);
+    
+    canvas.style.cursor = 'grab';
+    
+    // Initial draw
+    resizeCanvas();
+    
+    // Auto rotate sedikit saat idle (opsional)
+    let autoRotate = true;
+    let autoRotateAngle = 0;
+    
+    function autoRotateGlobe() {
+      if (!isDragging && autoRotate) {
+        autoRotateAngle += 0.002;
+        rotationY = autoRotateAngle;
+        draw();
+      }
+      requestAnimationFrame(autoRotateGlobe);
+    }
+    
+    // Hentikan auto rotate saat user drag
+    function stopAutoRotate() {
+      autoRotate = false;
+      setTimeout(() => {
+        if (!isDragging) autoRotate = true;
+      }, 3000);
+    }
+    
+    canvas.addEventListener('mousedown', stopAutoRotate);
+    canvas.addEventListener('touchstart', stopAutoRotate);
+    
+    // Start auto rotate
+    autoRotateGlobe();
+  })();
+</script>
+
+<style>
+  canvas {
+    transition: box-shadow 0.3s ease;
+  }
+  
+  canvas:hover {
+    box-shadow: 0 0 30px rgba(255, 68, 68, 0.3);
+  }
+</style>

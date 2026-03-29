@@ -1,0 +1,110 @@
+---
+// Welcome.astro - Logo + teks welcome + loading bar 1-100%
+---
+
+<div class="text-center space-y-6">
+  {/* Logo */}
+  <div class="flex justify-center animate-fade-in-down">
+    <img 
+      src="/images/logo.png" 
+      alt="Logo" 
+      class="w-24 h-24 md:w-32 md:h-32 object-contain hover:scale-110 transition-transform duration-500 hover:rotate-3"
+      onerror="this.src='https://placehold.co/128x128/red/white?text=Logo'"
+    />
+  </div>
+  
+  {/* Welcome Text */}
+  <div class="space-y-3 animate-fade-in-up">
+    <h1 class="text-4xl md:text-6xl font-bold bg-gradient-to-r from-red-600 to-red-400 dark:from-red-500 dark:to-red-300 bg-clip-text text-transparent">
+      Welcome to My Portfolio
+    </h1>
+    <p class="text-gray-600 dark:text-gray-400 text-lg md:text-xl">
+      Let's explore my creative journey
+    </p>
+  </div>
+  
+  {/* Loading Bar */}
+  <div class="max-w-md mx-auto mt-8 animate-fade-in">
+    <div class="relative h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+      <div 
+        id="loading-bar" 
+        class="absolute left-0 top-0 h-full bg-gradient-to-r from-red-500 to-red-600 rounded-full transition-all duration-100 ease-out"
+        style="width: 0%"
+      ></div>
+    </div>
+    <p id="loading-text" class="mt-2 text-sm text-gray-500 dark:text-gray-400 font-mono">0%</p>
+  </div>
+</div>
+
+<script>
+  // Loading bar 1-100% dengan requestAnimationFrame - ringan dan smooth
+  (function() {
+    const bar = document.getElementById('loading-bar');
+    const text = document.getElementById('loading-text');
+    
+    let percent = 0;
+    const duration = 2000; // 2 detik
+    const startTime = performance.now();
+    
+    function update(currentTime) {
+      const elapsed = currentTime - startTime;
+      percent = Math.min(100, (elapsed / duration) * 100);
+      
+      if (bar && text) {
+        bar.style.width = percent + '%';
+        text.textContent = Math.floor(percent) + '%';
+      }
+      
+      if (percent < 100) {
+        requestAnimationFrame(update);
+      }
+    }
+    
+    requestAnimationFrame(update);
+  })();
+</script>
+
+<style is:global>
+  @keyframes fade-in-down {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes fade-in-up {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  .animate-fade-in-down {
+    animation: fade-in-down 0.6s ease-out;
+  }
+  
+  .animate-fade-in-up {
+    animation: fade-in-up 0.6s ease-out 0.2s both;
+  }
+  
+  .animate-fade-in {
+    animation: fade-in 0.6s ease-out 0.4s both;
+  }
+</style>

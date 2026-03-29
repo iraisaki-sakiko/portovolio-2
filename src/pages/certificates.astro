@@ -1,0 +1,152 @@
+---
+import Layout from '../layouts/Layout.astro';
+import GlassCard from '../components/GlassCard.astro';
+
+// Certificates Data (10 sertifikat)
+const certificates = [
+  { id: 1, title: "Certified Ethical Hacker (CEH)", issuer: "EC-Council", date: "January 2025", image: "/images/certificates/sertifikat1.jpg" },
+  { id: 2, title: "Web Application Security", issuer: "PortSwigger", date: "December 2024", image: "/images/certificates/sertifikat2.jpg" },
+  { id: 3, title: "Python Advanced Programming", issuer: "Coursera", date: "November 2024", image: "/images/certificates/sertifikat3.jpg" },
+  { id: 4, title: "Telegram Bot Development Mastery", issuer: "Udemy", date: "October 2024", image: "/images/certificates/sertifikat4.jpg" },
+  { id: 5, title: "Network Security Fundamentals", issuer: "Cisco", date: "September 2024", image: "/images/certificates/sertifikat5.jpg" },
+  { id: 6, title: "Full Stack Web Development", issuer: "Dicoding", date: "August 2024", image: "/images/certificates/sertifikat6.jpg" },
+  { id: 7, title: "Penetration Testing Professional", issuer: "INE", date: "July 2024", image: "/images/certificates/sertifikat7.jpg" },
+  { id: 8, title: "Linux System Administration", issuer: "Red Hat", date: "June 2024", image: "/images/certificates/sertifikat8.jpg" },
+  { id: 9, title: "JavaScript Advanced Concepts", issuer: "freeCodeCamp", date: "May 2024", image: "/images/certificates/sertifikat9.jpg" },
+  { id: 10, title: "Cybersecurity Analyst", issuer: "CompTIA", date: "April 2024", image: "/images/certificates/sertifikat10.jpg" }
+];
+---
+
+<Layout title="Certificates | My Portfolio" description="View my professional certificates and achievements">
+  <div class="max-w-7xl mx-auto">
+    <div class="text-center mb-12">
+      <h1 class="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-red-600 to-red-400 bg-clip-text text-transparent">
+        Certificates
+      </h1>
+      <p class="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+        Professional certifications and achievements
+      </p>
+      <p class="text-sm text-gray-500 dark:text-gray-500 mt-2">
+        Click on any certificate to zoom and view details
+      </p>
+    </div>
+    
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      {certificates.map((cert) => (
+        <div
+          x-data="{ open: false }"
+          class="group cursor-pointer"
+          @click="open = true"
+        >
+          <GlassCard class="overflow-hidden transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl">
+            <div class="relative aspect-[4/3] overflow-hidden">
+              <img
+                src={cert.image}
+                alt={cert.title}
+                class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                loading="lazy"
+                onerror="this.src='https://placehold.co/600x450/red/white?text=' + encodeURIComponent(cert.title)"
+              />
+              <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end justify-center pb-4">
+                <span class="text-white text-sm font-medium bg-black/50 px-3 py-1 rounded-full">Click to Zoom</span>
+              </div>
+            </div>
+            <div class="p-4">
+              <h3 class="font-bold text-gray-800 dark:text-white mb-1 line-clamp-1">{cert.title}</h3>
+              <p class="text-sm text-gray-600 dark:text-gray-400">{cert.issuer}</p>
+              <p class="text-xs text-gray-500 dark:text-gray-500 mt-1">{cert.date}</p>
+            </div>
+          </GlassCard>
+        </div>
+      ))}
+    </div>
+  </div>
+</Layout>
+
+<!-- Modal Component untuk Zoom -->
+<div id="certificate-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/90 backdrop-blur-sm p-4" style="display: none;">
+  <div class="relative max-w-5xl w-full max-h-[90vh] bg-white dark:bg-gray-900 rounded-2xl overflow-hidden shadow-2xl">
+    <button id="close-modal" class="absolute top-4 right-4 z-10 p-2 rounded-full bg-black/50 hover:bg-black/70 text-white transition-all duration-300">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+      </svg>
+    </button>
+    
+    <div class="p-4 md:p-6 overflow-auto max-h-[90vh]">
+      <img id="modal-image" src="" alt="Certificate" class="w-full h-auto rounded-lg shadow-lg">
+      <div class="mt-4 text-center">
+        <h3 id="modal-title" class="text-xl md:text-2xl font-bold text-gray-800 dark:text-white"></h3>
+        <p id="modal-issuer" class="text-gray-600 dark:text-gray-400 mt-1"></p>
+        <p id="modal-date" class="text-sm text-gray-500 dark:text-gray-500 mt-1"></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Modal functionality for certificate zoom
+  (function() {
+    const modal = document.getElementById('certificate-modal');
+    const modalImage = document.getElementById('modal-image');
+    const modalTitle = document.getElementById('modal-title');
+    const modalIssuer = document.getElementById('modal-issuer');
+    const modalDate = document.getElementById('modal-date');
+    const closeBtn = document.getElementById('close-modal');
+    
+    const certificates = [
+      { id: 1, title: "Certified Ethical Hacker (CEH)", issuer: "EC-Council", date: "January 2025", image: "/images/certificates/sertifikat1.jpg" },
+      { id: 2, title: "Web Application Security", issuer: "PortSwigger", date: "December 2024", image: "/images/certificates/sertifikat2.jpg" },
+      { id: 3, title: "Python Advanced Programming", issuer: "Coursera", date: "November 2024", image: "/images/certificates/sertifikat3.jpg" },
+      { id: 4, title: "Telegram Bot Development Mastery", issuer: "Udemy", date: "October 2024", image: "/images/certificates/sertifikat4.jpg" },
+      { id: 5, title: "Network Security Fundamentals", issuer: "Cisco", date: "September 2024", image: "/images/certificates/sertifikat5.jpg" },
+      { id: 6, title: "Full Stack Web Development", issuer: "Dicoding", date: "August 2024", image: "/images/certificates/sertifikat6.jpg" },
+      { id: 7, title: "Penetration Testing Professional", issuer: "INE", date: "July 2024", image: "/images/certificates/sertifikat7.jpg" },
+      { id: 8, title: "Linux System Administration", issuer: "Red Hat", date: "June 2024", image: "/images/certificates/sertifikat8.jpg" },
+      { id: 9, title: "JavaScript Advanced Concepts", issuer: "freeCodeCamp", date: "May 2024", image: "/images/certificates/sertifikat9.jpg" },
+      { id: 10, title: "Cybersecurity Analyst", issuer: "CompTIA", date: "April 2024", image: "/images/certificates/sertifikat10.jpg" }
+    ];
+    
+    function openModal(cert) {
+      modalImage.src = cert.image;
+      modalTitle.textContent = cert.title;
+      modalIssuer.textContent = cert.issuer;
+      modalDate.textContent = cert.date;
+      modal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+    
+    function closeModal() {
+      modal.style.display = 'none';
+      document.body.style.overflow = '';
+    }
+    
+    // Add click handlers to all certificate cards
+    const cards = document.querySelectorAll('.group.cursor-pointer');
+    cards.forEach((card, index) => {
+      card.addEventListener('click', () => {
+        openModal(certificates[index]);
+      });
+    });
+    
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) closeModal();
+    });
+    
+    // Close with Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modal.style.display === 'flex') {
+        closeModal();
+      }
+    });
+  })();
+</script>
+
+<style is:global>
+  .line-clamp-1 {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>

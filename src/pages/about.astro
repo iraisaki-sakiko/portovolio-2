@@ -1,0 +1,115 @@
+---
+import Layout from '../layouts/Layout.astro';
+import GlassCard from '../components/GlassCard.astro';
+---
+
+<Layout title="About Me | My Portfolio" description="Learn more about me and my journey">
+  <div class="max-w-6xl mx-auto">
+    <h1 class="text-4xl md:text-5xl font-bold text-center mb-12 bg-gradient-to-r from-red-600 to-red-400 bg-clip-text text-transparent">
+      About Me
+    </h1>
+    
+    <div class="grid md:grid-cols-2 gap-8 items-start">
+      {/* Left Side - Photo 9:16 */}
+      <div class="relative group">
+        <GlassCard class="overflow-hidden p-2">
+          <div class="relative aspect-[9/16] rounded-xl overflow-hidden">
+            <img 
+              src="/images/Adhi.jpg" 
+              alt="Adhi - Cybersecurity & Web Developer"
+              class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+              onerror="this.src='https://placehold.co/600x1067/red/white?text=Adhi'"
+            />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          </div>
+        </GlassCard>
+      </div>
+      
+      {/* Right Side - Biodata */}
+      <div class="space-y-6">
+        <GlassCard class="p-6 md:p-8">
+          <h2 class="text-2xl md:text-3xl font-bold text-red-600 dark:text-red-400 mb-4">
+            Adhi Pratama
+          </h2>
+          
+          <div class="space-y-4">
+            {/* Biodata Grid */}
+            <div class="grid grid-cols-2 gap-4 pb-4 border-b border-gray-200 dark:border-gray-700">
+              <div>
+                <p class="text-sm text-gray-500 dark:text-gray-400">Age</p>
+                <p class="text-lg font-semibold">19 Years</p>
+              </div>
+              <div>
+                <p class="text-sm text-gray-500 dark:text-gray-400">Education</p>
+                <p class="text-lg font-semibold">SMKS Pasundan 1 Banjar</p>
+              </div>
+              <div>
+                <p class="text-sm text-gray-500 dark:text-gray-400">Location</p>
+                <p class="text-lg font-semibold">Banjar, Indonesia</p>
+              </div>
+              <div>
+                <p class="text-sm text-gray-500 dark:text-gray-400">Role</p>
+                <p class="text-lg font-semibold">Cybersecurity Enthusiast & Developer</p>
+              </div>
+            </div>
+            
+            {/* Bio Description */}
+            <div>
+              <h3 class="text-xl font-semibold mb-3 text-red-600 dark:text-red-400">About Me</h3>
+              <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
+                I'm a passionate cybersecurity enthusiast and full-stack developer from SMKS Pasundan 1 Banjar. 
+                My journey focuses on exploring website security vulnerabilities, web development, and creating 
+                innovative Telegram bots with various features.
+              </p>
+            </div>
+            
+            {/* Skills Section */}
+            <div>
+              <h3 class="text-xl font-semibold mb-3 text-red-600 dark:text-red-400">Skills & Expertise</h3>
+              <div class="flex flex-wrap gap-2">
+                <span class="px-3 py-1 rounded-full bg-red-100 dark:bg-red-950 text-red-600 dark:text-red-400 text-sm">Web Security</span>
+                <span class="px-3 py-1 rounded-full bg-red-100 dark:bg-red-950 text-red-600 dark:text-red-400 text-sm">Python</span>
+                <span class="px-3 py-1 rounded-full bg-red-100 dark:bg-red-950 text-red-600 dark:text-red-400 text-sm">Telegram Bot Development</span>
+                <span class="px-3 py-1 rounded-full bg-red-100 dark:bg-red-950 text-red-600 dark:text-red-400 text-sm">Web Development</span>
+                <span class="px-3 py-1 rounded-full bg-red-100 dark:bg-red-950 text-red-600 dark:text-red-400 text-sm">Penetration Testing</span>
+                <span class="px-3 py-1 rounded-full bg-red-100 dark:bg-red-950 text-red-600 dark:text-red-400 text-sm">Botnet Analysis (Educational)</span>
+                <span class="px-3 py-1 rounded-full bg-red-100 dark:bg-red-950 text-red-600 dark:text-red-400 text-sm">Real-time Monitoring</span>
+              </div>
+            </div>
+            
+            {/* Focus Areas */}
+            <div>
+              <h3 class="text-xl font-semibold mb-3 text-red-600 dark:text-red-400">What I Do</h3>
+              <ul class="space-y-2 text-gray-700 dark:text-gray-300">
+                <li class="flex items-start gap-2">
+                  <svg class="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                  </svg>
+                  <span>Finding website security vulnerabilities (Ethical Hacking)</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <svg class="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                  </svg>
+                  <span>Web development with modern technologies</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <svg class="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                  </svg>
+                  <span>Creating Telegram bots with advanced features</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <svg class="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                  </svg>
+                  <span>Pentesting tools development for educational purposes</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </GlassCard>
+      </div>
+    </div>
+  </div>
+</Layout>
